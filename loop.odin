@@ -90,7 +90,7 @@ on_action_invoked :: proc "c" (m: sdbus.Message, userdata: rawptr, err: sdbus.Er
 		}
 	} else if action == "cancel" {
 		fmt.println("Canceled update.")
-		when ODIN_DEBUG && D_EXIT_EVENT_ON_CANCEL {
+		when D_EXIT_EVENT_ON_CANCEL {
 			sdevent.exit(ctx.event, 0)
 		}
 	}
@@ -127,7 +127,7 @@ on_interval :: proc "system" (event_source: sdevent.Event_Source, usec: u64, dat
 
 	defer if should_reschedule {
 		log.info("scheduling timer to", config.interval * 60, "seconds later...")
-		when ODIN_DEBUG && D_FAST_RESCHEDULE {
+		when D_FAST_RESCHEDULE {
 			sdevent.source_set_time(event_source, event_now + sec_to_micro(u64(D_FAST_RTIME)))
 		} else {
 			sdevent.source_set_time(
@@ -149,19 +149,19 @@ on_interval :: proc "system" (event_source: sdevent.Event_Source, usec: u64, dat
 	unix_now := time.time_to_unix(time.now())
 	rem_time := (unix_now - i64(last_notification)) / 60
 
-	if !(ODIN_DEBUG && D_FAST_RESCHEDULE) &&
-	   !(ctx.intervals_reached == 0 && config.check_on_startup) &&
-	   rem_time < config.interval {
-		pprint_warning(
-			"It has only been %v minutes since the last interval, so I'll be rescheduling it to check after %v minutes.",
-			rem_time,
-			config.interval - rem_time,
-		)
-		secs := sec_to_micro(cast(u64)(config.interval - rem_time) * 60)
-		sdevent.source_set_time(event_source, event_now + secs)
-		sdevent.source_set_enabled(event_source, .ONESHOT)
-		should_reschedule = false
-		return 0
+	when !D_FAST_RESCHEDULE {
+		if !(ctx.intervals_reached == 0 && config.check_on_startup) && rem_time < config.interval {
+			pprint_warning(
+				"It has only been %v minutes since the last interval, so I'll be rescheduling it to check after %v minutes.",
+				rem_time,
+				config.interval - rem_time,
+			)
+			secs := sec_to_micro(cast(u64)(config.interval - rem_time) * 60)
+			sdevent.source_set_time(event_source, event_now + secs)
+			sdevent.source_set_enabled(event_source, .ONESHOT)
+			should_reschedule = false
+			return 0
+		}
 	}
 
 	if config.check_on_startup && ctx.intervals_reached == 0 {
@@ -170,7 +170,7 @@ on_interval :: proc "system" (event_source: sdevent.Event_Source, usec: u64, dat
 		pprint_info("Interval reached (%v mins). Checking updates...", config.interval)
 	}
 
-	packages, perr := get_updates(sync = false when ODIN_DEBUG && D_DISABLE_SYNC else true)
+	packages, perr := get_updates(sync = false when D_DISABLE_SYNC else true)
 	defer free_packages(packages)
 	if perr != nil {
 		pprint_error(perr, "Error while fetching updates")
@@ -181,7 +181,7 @@ on_interval :: proc "system" (event_source: sdevent.Event_Source, usec: u64, dat
 	size: i64 = 0
 	for pkg in packages do size += pkg.dl_size
 
-	when !ODIN_DEBUG && !D_FAST_RESCHEDULE {
+	when !D_FAST_RESCHEDULE {
 		if len(packages) <= 0 {
 			pprint_info("No updates found. Recheduling...")
 			should_reschedule = true
