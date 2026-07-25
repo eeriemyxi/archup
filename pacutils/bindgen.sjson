@@ -1,0 +1,42 @@
+inputs = [
+  "./pacutils-vendor/lib/pacutils.h",
+  "./pacutils-vendor/lib/pacutils/",
+]
+
+inputs = [
+  "./includes/"
+]
+
+output_folder = "pacutils"
+
+remove_type_prefix = "pu_"
+remove_function_prefix = "pu_"
+
+remove_type_suffix = "_t"
+force_ada_case_types = true
+
+import_lib = "system:pacutils"
+imports_file = "imports.inc"
+
+// procedure_type_overrides = {
+//   "pu_config_reader_finit.stream" = "^libc.FILE"
+// }
+//
+// struct_field_overrides = {
+//   "pu_ui_ctx_download_t.out" = "^libc.FILE"
+// }
+
+remove = [
+  "BASEVER",
+  "BUILDVER",
+  "PREFIX",
+  "LOCALSTATEDIR",
+  "SYSCONFDIR",
+  "CACHEDIR",
+  "DBEXT",
+  "DBPATH",
+  "GPGDIR",
+  "HOOKDIR",
+  "LOGFILE",
+  "ROOTDIR"
+]

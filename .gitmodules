@@ -1,0 +1,6 @@
+[submodule "ext/sqlite"]
+	path = ext/sqlite
+	url = https://github.com/saenai255/odin-sqlite3
+[submodule "alpm-auto/pacman"]
+	path = alpm-auto/pacman
+	url = https://github.com/devkitPro/pacman/

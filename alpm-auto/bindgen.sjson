@@ -1,0 +1,21 @@
+inputs = [
+  "./pacman/lib/libalpm/",
+]
+
+output_folder = "alpm"
+package_name = "alpm_auto"
+
+remove_type_prefix = "alpm_"
+remove_function_prefix = "alpm_"
+
+remove_type_suffix = "_t"
+force_ada_case_types = true
+
+import_lib = "system:alpm"
+imports_file = "imports.inc"
+
+remove = [
+   "_alpm_handle_t"
+   "_alpm_db_t"
+   "_alpm_pkg_t"
+]
