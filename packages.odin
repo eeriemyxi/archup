@@ -254,7 +254,19 @@ get_updates :: proc(sync: bool = true) -> (packages: [dynamic]Package, err: Erro
 	for i := alpm.db_get_pkgcache(db_local); i != nil; i = i.next {
 		lpkg := cast(^alpm.Pkg)i.data
 		name := alpm.pkg_get_name(lpkg)
-		npkg := alpm.find_dbs_satisfier(handle, sync_dbs, name)
+
+		// It is possible to use alpm.find_dbs_satisfier(handle, sync_dbs, name)
+		// but it messes up priorities. We use the following algo where we stop
+		// looking after first find.
+		npkg: ^alpm.Pkg = nil
+		for db_node := sync_dbs; db_node != nil; db_node = db_node.next {
+			db := cast(^alpm.Db)db_node.data
+			if found := alpm.db_get_pkg(db, name); found != nil {
+				npkg = found
+				break
+			}
+		}
+
 		if npkg != nil {
 			old_ver := alpm.pkg_get_version(lpkg)
 			new_ver := alpm.pkg_get_version(npkg)
