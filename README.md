@@ -8,6 +8,8 @@ function. It only asks for root permission when you hit "Upgrade" button.
 Powered by [Odin](https://odin-lang.org/), a low level programming language and
 an alternative to C.
 
+It has advanced features like calculating _remaining_ time since last notification and starting the scheduler based on that on startup. So that you don't have to worry about accidental or deliberate shutdowns of your system.
+
 # Screenshots
 ![](assets/screenshot-i.png)
 ![](assets/screenshot-ii.png)
@@ -57,6 +59,10 @@ immediately check for upgrades on startup.
 
 `config.minimum_n_packages` is a number which represents the minimum count of
 packages that must be met for Archup to consider worth upgrading.
+
+The daemon smartly checks for changes to the Config file and reloads on the
+fly. It also tells you about errors in your Lua config file.
+![](assets/screenshot-iv.png)
 
 # Installation
 <!-- @TODO: Add GitHub CI script to release prebuilt binaries. -->
