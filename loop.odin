@@ -188,6 +188,16 @@ on_interval :: proc "system" (event_source: sdevent.Event_Source, usec: u64, dat
 			return 0
 		}
 
+		if size < config.minimum_n_size {
+			pprint_warning(
+				"The total upgrade size is %v bytes, but minimum is set to %v bytes. Ignoring.",
+				size,
+				config.minimum_n_size,
+			)
+			should_reschedule = true
+			return 0
+		}
+
 		if i64(len(packages)) < config.minimum_n_packages {
 			pprint_warning(
 				"Only %v packages have updates, but minimum is set to %v. Ignoring.",
@@ -364,6 +374,7 @@ event_loop :: proc(db: ^sqlite.Connection, config: ^Config, config_path: string)
 	)
 
 	kv_print("Interval", fmt.tprint(config.interval, "minutes"))
+	kv_print("Minimum Size Required", fmt.tprint(config.minimum_n_size, "bytes"))
 	kv_print("Minimum Packages Required", fmt.tprint(config.minimum_n_packages, "packages"))
 
 	sdevent.add_time(

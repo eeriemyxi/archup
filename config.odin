@@ -15,6 +15,7 @@ Config :: struct {
 	pacman_config_content: string,
 	check_on_startup:      bool,
 	minimum_n_packages:    i64,
+	minimum_n_size:    i64,
 }
 
 free_config :: proc(config: ^Config) {
@@ -77,6 +78,8 @@ parse_config_file :: proc(
 
 	minimum_n_packages := get_field(state, "minimum_n_packages", i64) or_return
 	config.minimum_n_packages = minimum_n_packages
+
+	config.minimum_n_size = get_field(state, "minimum_n_size", i64) or_return
 
 	lua.close(state)
 	return config, nil

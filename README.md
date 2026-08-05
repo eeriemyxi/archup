@@ -58,7 +58,11 @@ override certain system configurations like parallel downloads.
 immediately check for upgrades on startup.
 
 `config.minimum_n_packages` is a number which represents the minimum count of
-packages that must be met for Archup to consider worth upgrading.
+packages that must be met for Archup to consider upgrading.
+
+`config.minimum_n_size` is a number which represents the total download size in
+bytes that must be met for Archup to consider upgrading. This is checked
+before `minimum_n_packages`.
 
 The daemon smartly checks for changes to the Config file and reloads on the
 fly. It also tells you about errors in your Lua config file.
