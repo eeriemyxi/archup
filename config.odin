@@ -64,20 +64,15 @@ parse_config_file :: proc(
 		}
 	}
 
-	interval := get_field(state, "interval", i64) or_return
-	config.interval = interval
+	config.interval = get_field(state, "interval", i64) or_return
 
-	terminal_prefix := get_field(state, "terminal_prefix", [dynamic]string) or_return
-	config.terminal_prefix = terminal_prefix
+	config.terminal_prefix = get_field(state, "terminal_prefix", [dynamic]string) or_return
 
-	pacman_config_content := get_field(state, "pacman_config_content", string) or_return
-	config.pacman_config_content = pacman_config_content
+	config.pacman_config_content = get_field(state, "pacman_config_content", string) or_return
 
-	check_on_startup := get_field(state, "check_on_startup", bool) or_return
-	config.check_on_startup = check_on_startup
+	config.check_on_startup = get_field(state, "check_on_startup", bool) or_return
 
-	minimum_n_packages := get_field(state, "minimum_n_packages", i64) or_return
-	config.minimum_n_packages = minimum_n_packages
+	config.minimum_n_packages = get_field(state, "minimum_n_packages", i64) or_return
 
 	config.minimum_n_size = get_field(state, "minimum_n_size", i64) or_return
 
